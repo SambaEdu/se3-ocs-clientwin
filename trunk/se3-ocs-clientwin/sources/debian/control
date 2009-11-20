@@ -1,0 +1,11 @@
+Source: se3-ocs-clientwin
+Section: misc
+Priority: extra
+Maintainer: franck <franck.molle@ac-rouen.fr>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+
+Package: se3-ocs-clientwin
+Architecture: any
+Depends: se3 (>= 0.98)
+Description: windows client for the se3-ocs paquet
