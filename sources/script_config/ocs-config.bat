@@ -14,7 +14,7 @@ Goto FIN
 
 :ConfigOCS
 :: S'assurer que CPAU.exe est bien present a cet endroit!
-Set CPAU=\\%SE3%\Progs\install\installdll\CPAU.exe
+Set CPAU=\\%SE3%\netlogon\CPAU.exe
 :: Repertoire dans lequel ocs est dezippe
 Set OcsDir=\\%SE3%\Progs\ro\inventory\deploy
 :: Repertoire template base
