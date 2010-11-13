@@ -21,42 +21,98 @@ set -e
 case "$1" in
     install|configure)
 
-	
+. /usr/share/se3/includes/config.inc.sh -svm > /dev/null
 
-	### on suppose que l'on est sous debian  ####
-	WWWPATH="/var/www"
-	## recuperation des variables necessaires pour interoger mysql ###
-	if [ -e $WWWPATH/se3/includes/config.inc.php ]; then
-		dbhost=`cat $WWWPATH/se3/includes/config.inc.php | grep "dbhost=" | cut -d = -f2 | cut -d \" -f2`
-		dbname=`cat $WWWPATH/se3/includes/config.inc.php | grep "dbname=" | cut	-d = -f 2 |cut -d \" -f 2`
-		dbuser=`cat $WWWPATH/se3/includes/config.inc.php | grep "dbuser=" | cut -d = -f 2 | cut -d \" -f 2`
-		dbpass=`cat $WWWPATH/se3/includes/config.inc.php | grep "dbpass=" | cut -d = -f 2 | cut -d \" -f 2`
-	else
-		echo "Fichier de configuration inaccessible, le script ne peut se poursuivre."
-		exit 1
-	fi
 
-	ADMINSE3_PASS=`echo "SELECT value FROM params WHERE name='xppass'" | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N`
-	if [ "X$ADMINSE3_PASS" = "X" ]; then # if empty
-		echo "pas de mot de pass défini pour adminse3"
-		exit 1
-	fi
+if [ "X$xppass" = "X" ]; then # if empty
+	echo "pas de mot de pass defini pour adminse3"
+	exit 1
+fi
 
-# IPSE3=`cat /etc/samba/smb.conf |grep -i interfaces | awk -F' = ' '{ print $2 }'|cut -d '/' -f 1`
-#NETBIOS=`cat /etc/samba/smb.conf |grep -i netbios | grep -v ^#.*| awk -F' = ' '{ print $2 }'`
-# Modif wawa
-NETBIOS=`ldapsearch -xLLL l=maitre cn | grep "cn:" |cut -d" " -f2`
-# /Modif wawa
-IPSE3=$(net lookup $NETBIOS)
-CONF_OCS="/var/se3/Progs/install/ocs-config.bat"
-sed -i $CONF_OCS -e s/##NETBIOS_NAME##/$NETBIOS/
-sed -i $CONF_OCS -e s/##IPSE3##/$IPSE3/
-sed -i $CONF_OCS -e s/##ADMINSE3PASS##/$ADMINSE3_PASS/
-chown admin $CONF_OCS
-chmod 700 $CONF_OCS 
+if [ -e /var/se3/Progs/install/ocs-config.bat ]; then
+	echo "Suppression de ocs-config.bat devenu inutile."
+	rm -rf /var/se3/Progs/install/ocs-config.bat
+fi
+
+##### SUPPRESSION de ocs-config.bat. Gereration du job CPAU cote serveur. ###
+OcsDir="/var/se3/Progs/ro/inventory/deploy"
+# Fix for wine when running from sudo
+export HOME=/root
+JOB=cpauOcs.job
+WINECMD="env WINEDEBUG=-all wine"
+rm -f $OcsDir/$JOB
+echo "Creation du $JOB CPAU destine a installer ocs-clientwin sur les postes."
+TASK="c:\\tmpOcs\\OcsAgentSetup.exe /S /server:$se3ip /pnum:909 /np /debug"
+echo "TASK se3 : $TASK" | sed -e "s/$xppass/XXXXXX/g"
+cd /tmp
+$WINECMD /home/netlogon/CPAU.exe -u adminse3 -wait  -p $xppass -file $JOB -lwop  -c -ex "$TASK" -enc > /dev/null
+mv $JOB $OcsDir
+
+
+### CREATION DE ocs.bat cote serveur pour les postes Clients W98 ou WinXP ###
+echo "Creation de $OcsDir/ocs.bat"
+OcsDirWin="\\\\$netbios_name\\Progs\\ro\\inventory\\deploy"
+echo ":: Installation du service OCS sur les postes clients">$OcsDir/ocs.bat
+echo "@echo OFF">>$OcsDir/ocs.bat
+# Test si OCS est deja installe>$OcsDir/ocs.bat
+echo "If \"%ProgramFiles%\" == \"\" Set ProgramFiles=C:\Program Files">>$OcsDir/ocs.bat
+echo "If Exist \"%ProgramFiles%\OCS Inventory Agent\OCSInventory.exe\" Goto FIN">>$OcsDir/ocs.bat
+echo "Set TMPOCS=c:\\tmpOcs">>$OcsDir/ocs.bat
+echo "Set CPAU=\\\\$netbios_name\\netlogon\\CPAU.exe">>$OcsDir/ocs.bat
+echo "If Not Exist %TMPOCS% mkdir %TMPOCS%">>$OcsDir/ocs.bat
+echo "if \"%OS%\" == \"Windows_NT\" goto InstWnt">>$OcsDir/ocs.bat
+echo "" >>$OcsDir/ocs.bat
+
+echo ":InstW9x">>$OcsDir/ocs.bat
+echo ":: Pour les Win98, execution de OcsAgentSetup.exe directement a partir du serveur">>$OcsDir/ocs.bat
+echo "echo Installation OCS-NG pour Win9x">>$OcsDir/ocs.bat
+echo "\"$OcsDirWin\\OcsAgentSetup.exe\" /S /server:$se3ip /pnum:909 /np /debug">>$OcsDir/ocs.bat
+echo "Goto InstOk">>$OcsDir/ocs.bat
+echo "">>$OcsDir/ocs.bat
+
+echo ":InstWnt">>$OcsDir/ocs.bat
+echo "echo Installation OCS-NG pour WinXP">>$OcsDir/ocs.bat
+echo "xcopy /I /H /R /Y /Z /Q \"$OcsDirWin\\*\" %TMPOCS% >NUL">>$OcsDir/ocs.bat
+echo "If Not Exist \"%TMPOCS%\\$JOB\" Goto Err2">>$OcsDir/ocs.bat
+echo "\"%CPAU%\" -dec -file \"%TMPOCS%\\$JOB\" -nowarn -lwp -wait -outprocexit 2>NUL >NUL">>$OcsDir/ocs.bat
+echo "If ErrorLevel 1 Goto Err3">>$OcsDir/ocs.bat
+echo "rmdir /S /Q \"%TMPOCS%\"">>$OcsDir/ocs.bat
+echo "Goto InstOk">>$OcsDir/ocs.bat
+echo "">>$OcsDir/ocs.bat
+
+echo ":Err2">>$OcsDir/ocs.bat
+echo "Echo Le fichier \"%TMPOCS%\\$JOB\" n'existe pas !">>$OcsDir/ocs.bat
+echo "">>$OcsDir/ocs.bat
+
+echo ":Err3">>$OcsDir/ocs.bat
+echo "rmdir /S /Q \"%TMPOCS%\"">>$OcsDir/ocs.bat
+echo "echo Erreur lors de l'installation d'OCS">>$OcsDir/ocs.bat
+echo "goto FIN">>$OcsDir/ocs.bat
+echo "">>$OcsDir/ocs.bat
+
+echo ":InstOk">>$OcsDir/ocs.bat
+echo "Echo Installation OCS : OK.">>$OcsDir/ocs.bat
+echo "">>$OcsDir/ocs.bat
+echo ":FIN">>$OcsDir/ocs.bat
+
+#### AJOUT DE LA LIGNE DANS base/logon.bat #####
+if [ "$(cat /home/templates/base/logon.bat | grep "ocs.bat")" = "" ]; then
+	echo "Ajout de la ligne necessaire dans /home/templates/base/logon.bat"
+	echo -e "\r">>/home/templates/base/logon.bat
+	echo -e "call \\\\\\\\$netbios_name\\Progs\\\\ro\\inventory\\deploy\\ocs.bat\r">>/home/templates/base/logon.bat
+else
+	echo "Template base correctement configure pour se3-ocs-clientwin."
+fi
+
+#### DROITS SUR Progs ####
+echo "Positionnement correct des droits sur le dossier de deploiement."
 chown -R admin:admins /var/se3/Progs/ro/inventory
 setfacl -R -m m:rwx /var/se3/Progs/ro/inventory
+
 [ -e /home/admin/Bureau/conf-ocs.bat ] && rm -f /home/admin/Bureau/conf-ocs.bat
+
+echo "Configuration de se3-ocs-clientwin terminee."
+
 ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
@@ -74,5 +130,3 @@ esac
 #DEBHELPER#
 
 exit 0
-
-
