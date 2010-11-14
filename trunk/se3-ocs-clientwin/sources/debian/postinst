@@ -42,7 +42,7 @@ JOB=cpauOcs.job
 WINECMD="env WINEDEBUG=-all wine"
 rm -f $OcsDir/$JOB
 echo "Creation du $JOB CPAU destine a installer ocs-clientwin sur les postes."
-TASK="c:\\tmpOcs\\OcsAgentSetup.exe /S /server:$se3ip /pnum:909 /np /debug"
+TASK="echo Veuillez patienter...&&c:\\tmpOcs\\OcsAgentSetup.exe /S /server:$se3ip /pnum:909 /np /debug"
 echo "TASK se3 : $TASK" | sed -e "s/$xppass/XXXXXX/g"
 cd /tmp
 $WINECMD /home/netlogon/CPAU.exe -u adminse3 -wait  -p $xppass -file $JOB -lwop  -c -ex "$TASK" -enc > /dev/null
@@ -76,7 +76,7 @@ echo "xcopy /I /H /R /Y /Z /Q \"$OcsDirWin\\*\" %TMPOCS% >NUL">>$OcsDir/ocs.bat
 echo "If Not Exist \"%TMPOCS%\\$JOB\" Goto Err2">>$OcsDir/ocs.bat
 echo "\"%CPAU%\" -dec -file \"%TMPOCS%\\$JOB\" -nowarn -lwp -wait -outprocexit 2>NUL >NUL">>$OcsDir/ocs.bat
 echo "If ErrorLevel 1 Goto Err3">>$OcsDir/ocs.bat
-echo "rmdir /S /Q \"%TMPOCS%\"">>$OcsDir/ocs.bat
+#echo "rmdir /S /Q \"%TMPOCS%\"">>$OcsDir/ocs.bat
 echo "Goto InstOk">>$OcsDir/ocs.bat
 echo "">>$OcsDir/ocs.bat
 
@@ -93,7 +93,54 @@ echo "">>$OcsDir/ocs.bat
 echo ":InstOk">>$OcsDir/ocs.bat
 echo "Echo Installation OCS : OK.">>$OcsDir/ocs.bat
 echo "">>$OcsDir/ocs.bat
+#echo ":FIN">>$OcsDir/ocs.bat
+
+
+## AJOUT : REMONTEE IMMEDIATE DE L'INVENTAIRE (Olikin) ###
+JOB=cpauOcsRemontee.job
+rm -f $OcsDir/$JOB
+echo "Creation du $JOB CPAU destine a remonter immediatement l'inventaire sur le serveur $netbios_name."
+TASK="call $OcsDirWin\\ocsremontee.bat"
+echo "TASK se3 : $TASK" | sed -e "s/$xppass/XXXXXX/g"
+cd /tmp
+$WINECMD /home/netlogon/CPAU.exe -u adminse3 -wait  -p $xppass -file $JOB -lwop  -c -ex "$TASK" -enc > /dev/null
+mv $JOB $OcsDir
+
+echo "Creation du script $OcsDir/ocs.bat (remontee immediate d'inventaire)."
+echo "">>$OcsDir/ocs.bat
+echo "echo Remontee immediate de l'inventaire OCS sur le SE3.">>$OcsDir/ocs.bat
+echo "If Not Exist \"%TMPOCS%\\$JOB\" Goto Err4">>$OcsDir/ocs.bat
+echo "\"%CPAU%\" -dec -file \"%TMPOCS%\\$JOB\" -nowarn -lwp -wait -outprocexit 2>NUL >NUL">>$OcsDir/ocs.bat
+echo "If ErrorLevel 1 Goto Err5">>$OcsDir/ocs.bat
+echo "rmdir /S /Q \"%TMPOCS%\"">>$OcsDir/ocs.bat
+echo "Goto RemOk">>$OcsDir/ocs.bat
+echo "">>$OcsDir/ocs.bat
+echo ":Err4">>$OcsDir/ocs.bat
+echo "Echo Le fichier \"%TMPOCS%\\$JOB\" n'existe pas ! Pas de remontee immediate de l'inventaire !">>$OcsDir/ocs.bat
+echo "">>$OcsDir/ocs.bat
+echo ":Err5">>$OcsDir/ocs.bat
+echo "rmdir /S /Q \"%TMPOCS%\"">>$OcsDir/ocs.bat
+echo "echo Erreur lors de la remontee du rapport OCS.">>$OcsDir/ocs.bat
+echo "goto FINRem">>$OcsDir/ocs.bat
+echo "">>$OcsDir/ocs.bat
+echo ":RemOk">>$OcsDir/ocs.bat
+echo "Echo Remontee du premier inventaire OCS : OK.">>$OcsDir/ocs.bat
+echo "">>$OcsDir/ocs.bat
 echo ":FIN">>$OcsDir/ocs.bat
+
+echo "@echo OFF">$OcsDir/ocsremontee.bat
+echo "echo Remontee immediate de l'inventaire.">>$OcsDir/ocsremontee.bat
+echo "set OCSINI=%ProgramFiles%\\OCS Inventory Agent\\service.ini">>$OcsDir/ocsremontee.bat
+echo "echo Arret du service OCS...">>$OcsDir/ocsremontee.bat
+echo "net stop \"OCS INVENTORY SERVICE\" >NUL">>$OcsDir/ocsremontee.bat
+echo "Copy \"%OCSINI%\" %systemdrive%\\FILEOCSINI.TMP >NUL">>$OcsDir/ocsremontee.bat
+echo "echo Modification du parametre TTO_WAIT pour remontee de l'inventaire dans 2 sec.">>$OcsDir/ocsremontee.bat
+echo "type %systemdrive%\\FILEOCSINI.TMP | Findstr /V /I \"\\<TTO_WAIT\"  > \"%OCSINI%\"">>$OcsDir/ocsremontee.bat
+echo "Del %systemdrive%\\FILEOCSINI.TMP >NUL">>$OcsDir/ocsremontee.bat
+echo "echo TTO_WAIT=2 >> \"%OCSINI%\"">>$OcsDir/ocsremontee.bat
+echo "echo Redemarrage du service OCS...">>$OcsDir/ocsremontee.bat
+echo "net start \"OCS INVENTORY SERVICE\" >NUL">>$OcsDir/ocsremontee.bat
+
 
 #### AJOUT DE LA LIGNE DANS base/logon.bat #####
 if [ "$(cat /home/templates/base/logon.bat | grep "ocs.bat")" = "" ]; then
@@ -101,7 +148,7 @@ if [ "$(cat /home/templates/base/logon.bat | grep "ocs.bat")" = "" ]; then
 	echo -e "\r">>/home/templates/base/logon.bat
 	echo -e "call \\\\\\\\$netbios_name\\Progs\\\\ro\\inventory\\deploy\\ocs.bat\r">>/home/templates/base/logon.bat
 else
-	echo "Template base correctement configure pour se3-ocs-clientwin."
+	echo "Template base deja correctement configure pour se3-ocs-clientwin."
 fi
 
 #### DROITS SUR Progs ####

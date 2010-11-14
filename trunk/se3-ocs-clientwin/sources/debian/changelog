@@ -2,6 +2,8 @@ se3-ocs-clientwin (0.1-5) unstable; urgency=low
 
   * generation des job CPAU cote serveur.
   * suppression du script config-ocs.bat
+  * remontee immediate de l'inventaire.
+  * message "Veuillez patienter" lors de l'installation.
 
  -- olikin <olivier.lax@free.fr> samedi 13 novembre 2010, 22:59:04 (UTC+0100)
 
