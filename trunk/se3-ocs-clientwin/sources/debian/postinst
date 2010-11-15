@@ -146,7 +146,12 @@ echo "net start \"OCS INVENTORY SERVICE\" >NUL">>$OcsDir/ocsremontee.bat
 if [ "$(cat /home/templates/base/logon.bat | grep "ocs.bat")" = "" ]; then
 	echo "Ajout de la ligne necessaire dans /home/templates/base/logon.bat"
 	echo -e "\r">>/home/templates/base/logon.bat
-	echo -e "call \\\\\\\\$netbios_name\\Progs\\\\ro\\inventory\\deploy\\ocs.bat\r">>/home/templates/base/logon.bat
+	DEBVERS=$(cat /etc/debian_version)
+	if [ "$DEBVERS" == "4.0" ]; then
+		echo -e "::call \\\\\\\\$netbios_name\\Progs\\\\ro\\inventory\\deploy\\ocs.bat\r">>/home/templates/base/logon.bat
+	else
+		echo -e "call \\\\\\\\$netbios_name\\Progs\\\\ro\\inventory\\deploy\\ocs.bat\r">>/home/templates/base/logon.bat
+	fi
 else
 	echo "Template base deja correctement configure pour se3-ocs-clientwin."
 fi
