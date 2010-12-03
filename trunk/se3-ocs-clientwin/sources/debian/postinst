@@ -163,6 +163,9 @@ setfacl -R -m m:rwx /var/se3/Progs/ro/inventory
 
 [ -e /home/admin/Bureau/conf-ocs.bat ] && rm -f /home/admin/Bureau/conf-ocs.bat
 
+# on vire le vieux script de config (historique) pour eviter les erreurs...
+[ -e /var/se3/Progs/install/ocs-config.bat ] && rm -f /var/se3/Progs/install/ocs-config.bat
+
 echo "Configuration de se3-ocs-clientwin terminee."
 
 ;;
