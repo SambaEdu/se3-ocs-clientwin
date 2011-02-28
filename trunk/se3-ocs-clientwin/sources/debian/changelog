@@ -1,0 +1,45 @@
+se3-ocs-clientwin (0.1-7) unstable; urgency=low
+
+  * supression anciens scripts de conf windows desormais inutiles
+
+ -- root <root@localhost.localdomain>  Sat,  4 Dec 2010 00:58:11 +0100
+
+se3-ocs-clientwin (0.1-6) unstable; urgency=low
+
+  * d��deploient du client activ��e manuellement pour etch.
+    ur etch.
+
+ -- root <root@localhost.localdomain>  Wed, 17 Nov 2010 15:00:18 +0100
+
+se3-ocs-clientwin (0.1-5) unstable; urgency=low
+
+  * utilisation de cpau ds /home/netlogon et passage à winne pour creer
+    le job d'install
+
+ -- root <root@localhost.localdomain>  Sun, 14 Nov 2010 12:54:33 +0100
+
+se3-ocs-clientwin (0.1-4) unstable; urgency=low
+
+  * maj de securit� - suppression lien symb vers bureau admin
+    in
+
+ -- franck <franck@fport>  Mon,  5 Feb 2007 23:49:18 +0100
+
+se3-ocs-clientwin (0.1-3) unstable; urgency=low
+
+  * suppression dep sur se3-ocs
+
+ -- franck <franck@fport>  Tue, 30 Jan 2007 13:07:04 +0100
+
+se3-ocs-clientwin (0.1-2) unstable; urgency=low
+
+  * Ajout test existence sur /home/admin/Bureau 
+
+ -- franck <franck@fport>  Thu, 25 Jan 2007 00:00:21 +0100
+
+se3-ocs-clientwin (0.1-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- franck <franck.molle@ac-rouen.fr>  Mon, 18 Dec 2006 01:01:53 +0100
+
