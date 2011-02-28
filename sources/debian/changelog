@@ -1,11 +1,22 @@
+se3-ocs-clientwin (0.1-7) unstable; urgency=low
+
+  * supression anciens scripts de conf windows desormais inutiles
+
+ -- root <root@localhost.localdomain>  Sat,  4 Dec 2010 00:58:11 +0100
+
+se3-ocs-clientwin (0.1-6) unstable; urgency=low
+
+  * d��deploient du client activ��e manuellement pour etch.
+    ur etch.
+
+ -- root <root@localhost.localdomain>  Wed, 17 Nov 2010 15:00:18 +0100
+
 se3-ocs-clientwin (0.1-5) unstable; urgency=low
 
-  * generation des job CPAU cote serveur.
-  * suppression du script config-ocs.bat
-  * remontee immediate de l'inventaire.
-  * message "Veuillez patienter" lors de l'installation.
+  * utilisation de cpau ds /home/netlogon et passage à winne pour creer
+    le job d'install
 
- -- olikin <olivier.lax@free.fr> samedi 13 novembre 2010, 22:59:04 (UTC+0100)
+ -- root <root@localhost.localdomain>  Sun, 14 Nov 2010 12:54:33 +0100
 
 se3-ocs-clientwin (0.1-4) unstable; urgency=low
 

@@ -2,8 +2,7 @@
 # $Id$
 # keyser@sambaedu.org - 12/2006
 SE3MODULE="se3-ocs-clientwin"
-PATH_SVN_LOCAL="/home/franck/se3/svn/"
-PATH_SE3MODULE="${PATH_SVN_LOCAL}${SE3MODULE}"
+PATH_SE3MODULE="$PWD"
 
 
 SOURCE_DIR="sources"
