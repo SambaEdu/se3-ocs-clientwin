@@ -6,6 +6,6 @@ Build-Depends: debhelper (>= 5)
 Standards-Version: 3.7.2
 
 Package: se3-ocs-clientwin
-Architecture: any
+Architecture: all
 Depends: se3 (>= 0.98)
 Description: windows client for the se3-ocs paquet
