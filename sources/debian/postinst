@@ -56,6 +56,7 @@ echo ":: Installation du service OCS sur les postes clients">$OcsDir/ocs.bat
 echo "@echo OFF">>$OcsDir/ocs.bat
 # Test si OCS est deja installe>$OcsDir/ocs.bat
 echo "If \"%ProgramFiles%\" == \"\" Set ProgramFiles=C:\Program Files">>$OcsDir/ocs.bat
+echo "If Exist \"%ProgramFiles(x86)%\" Set ProgramFiles=%ProgramFiles(x86)%">>$OcsDir/ocs.bat
 echo "If Exist \"%ProgramFiles%\OCS Inventory Agent\OCSInventory.exe\" Goto FIN">>$OcsDir/ocs.bat
 echo "Set TMPOCS=c:\\tmpOcs">>$OcsDir/ocs.bat
 echo "Set CPAU=\\\\$netbios_name\\netlogon\\CPAU.exe">>$OcsDir/ocs.bat
