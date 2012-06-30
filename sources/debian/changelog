@@ -1,3 +1,9 @@
+se3-ocs-clientwin (0.1-9) unstable; urgency=low
+
+  * correction sh pour bash
+
+ -- root <root@DevilXen>  Sat, 30 Jun 2012 01:37:08 +0200
+
 se3-ocs-clientwin (0.1-8) unstable; urgency=low
 
   * maj exe windows pour compat seven
