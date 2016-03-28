@@ -70,24 +70,17 @@ echo "Modification (si besoin) du script de login de base"
 
 # Nettoyage ancienne commande
 sed -i "/ocs.bat/d" /home/templates/base/logon.bat
+sed -i "/cpauOcs.job/d" /home/templates/base/logon.bat
 
 # Commande a placer dans le script de login des utilisateurs
 FINDCMD="\\\\\\\\$netbios_name\\\\netlogon\\\\CPAU.exe -dec -lwp -hide -cwd %SystemDrive%\\\\ -file \\\\\\\\$netbios_name\\\\Progs\\\\ro\\\\inventory\\\\deploy\\\\$JOB 2>NUL >NUL"
 
 TEST=""
-[ -e /home/templates/base/logon.bat ] && TEST=$(cat /home/templates/base/logon.bat | grep "$FINDCMD" | grep -v "::" | grep -v "rem")
-
-if [ ! "$TEST" = "" ]; then
-	echo "La commande d'installation de ocs existe dans logon.bat et n'est pas commentee."
-else
-	echo "Commande d'installation de ocs ajoutee a /home/templates/base/logon.bat"
-	
-    echo "\\\\$netbios_name\\netlogon\\CPAU.exe -dec -lwp -hide -cwd %SystemDrive%\\ -file \\\\$netbios_name\\Progs\\ro\\inventory\\deploy\\$JOB 2>NUL >NUL">>/home/templates/base/logon.bat
-    
-    todos /home/templates/base/logon.bat
-    chown admin:admins /home/templates/base/logon.bat
-    chmod 770 /home/templates/base/logon.bat
-fi
+echo "Commande d'installation de ocs ajoutee a /home/templates/base/logon.bat"
+echo "\\\\$netbios_name\\netlogon\\CPAU.exe -dec -lwp -hide -cwd %SystemDrive%\\ -file \\\\$netbios_name\\Progs\\ro\\inventory\\deploy\\$JOB 2>NUL >NUL">>/home/templates/base/logon.bat
+todos /home/templates/base/logon.bat
+chown admin:admins /home/templates/base/logon.bat
+chmod 770 /home/templates/base/logon.bat
 
 #### DROITS SUR Progs ####
 echo "Positionnement correct des droits sur le dossier de deploiement."
