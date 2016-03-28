@@ -1,0 +1,72 @@
+ dpkg-buildpackage -rfakeroot -D -us -uc -b
+dpkg-buildpackage: avertissement: utilisation d'une commande pour obtenir les privilèges administrateur en tant qu'administrateur
+dpkg-buildpackage: paquet source se3-ocs-clientwin
+dpkg-buildpackage: version source 2.0-2
+dpkg-buildpackage: source changé par Laurent JOLY <laurentjoly@orange.fr>
+ dpkg-source --before-build se3-ocs-clientwin-master
+dpkg-buildpackage: architecture hôte amd64
+ fakeroot debian/rules clean
+dh_testdir
+dh_testroot
+rm -f build-stamp configure-stamp
+# Add here commands to clean up after the build process.
+/usr/bin/make clean
+make[1]: entrant dans le répertoire « /root/se3-ocs-clientwin-master/build/se3-ocs-clientwin-master »
+make[1]: Rien à faire pour « clean ».
+make[1]: quittant le répertoire « /root/se3-ocs-clientwin-master/build/se3-ocs-clientwin-master »
+dh_clean 
+ debian/rules build
+dh_testdir
+# Add here commands to configure the package.
+touch configure-stamp
+dh_testdir
+# Add here commands to compile the package.
+/usr/bin/make
+make[1]: entrant dans le répertoire « /root/se3-ocs-clientwin-master/build/se3-ocs-clientwin-master »
+make[1]: Rien à faire pour « all ».
+make[1]: quittant le répertoire « /root/se3-ocs-clientwin-master/build/se3-ocs-clientwin-master »
+#docbook-to-man debian/se3-ocs-clientwin.sgml > se3-ocs-clientwin.1
+touch build-stamp
+ fakeroot debian/rules binary
+dh_testdir
+dh_testroot
+dh_clean -k 
+dh_clean: dh_clean -k is deprecated; use dh_prep instead
+dh_installdirs
+# Add here commands to install the package into debian/se3-ocs-clientwin.
+/usr/bin/make DESTDIR=/root/se3-ocs-clientwin-master/build/se3-ocs-clientwin-master/debian/se3-ocs-clientwin install
+make[1]: entrant dans le répertoire « /root/se3-ocs-clientwin-master/build/se3-ocs-clientwin-master »
+cp -R agent_win_2_1_1_1/* /root/se3-ocs-clientwin-master/build/se3-ocs-clientwin-master/debian/se3-ocs-clientwin/var/se3/Progs/ro/inventory/deploy/
+make[1]: quittant le répertoire « /root/se3-ocs-clientwin-master/build/se3-ocs-clientwin-master »
+dh_testdir
+dh_testroot
+dh_installchangelogs 
+dh_installdocs
+dh_installexamples
+dh_installman
+dh_link
+dh_strip
+dh_compress
+dh_fixperms
+dh_installdeb
+dh_shlibdeps
+dh_gencontrol
+dh_md5sums
+dh_builddeb
+dpkg-deb : construction du paquet « se3-ocs-clientwin » dans « ../se3-ocs-clientwin_2.0-2_all.deb ».
+ dpkg-genchanges -b >../se3-ocs-clientwin_2.0-2_amd64.changes
+dpkg-genchanges: envoi d'un binaire - aucune inclusion de code source
+ dpkg-source --after-build se3-ocs-clientwin-master
+dpkg-buildpackage: envoi d'un binaire seulement (aucune inclusion de code source)
+Now running lintian...
+warning: the authors of lintian do not recommend running it with root privileges!
+E: se3-ocs-clientwin: helper-templates-in-copyright
+E: se3-ocs-clientwin: copyright-contains-dh_make-todo-boilerplate
+W: se3-ocs-clientwin: copyright-without-copyright-notice
+W: se3-ocs-clientwin: readme-debian-contains-debmake-template
+E: se3-ocs-clientwin: extended-description-is-empty
+E: se3-ocs-clientwin: non-standard-dir-in-var var/se3/
+W: se3-ocs-clientwin: file-in-unusual-dir var/se3/Progs/ro/inventory/deploy/OCS-NG-Windows-Agent-Setup.exe
+W: se3-ocs-clientwin: file-in-unusual-dir var/se3/Progs/ro/inventory/deploy/ocs.bat
+W: se3-ocs-clientwin: file-in-unusual-dir var/se3/Progs/ro/inventory/deploy/ocs_autonome.bat
+Finished running lintian.
