@@ -5,8 +5,6 @@
 
 set -e
 
-
-
 case "$1" in
     install|configure)
 
@@ -18,47 +16,76 @@ if [ "X$xppass" = "X" ]; then # if empty
 	exit 1
 fi
 
+
+##### Grand nettoyage des versions précédentes de ocs #####
+if [ -e /var/se3/Progs/install/ocs-config.bat ]; then
+	echo "Suppression de ocs-config.bat devenu inutile."
+	rm -rf /var/se3/Progs/install/ocs-config.bat
+fi
+if [ -e /var/se3/Progs/install/deploy/ocs.bat ]; then
+	echo "Suppression de ocs.bat devenu inutile."
+	rm -rf /var/se3/Progs/install/ocs.bat
+fi
+if [ -e /var/se3/Progs/install/deploy/cpauOcs.job ]; then
+	echo "Suppression de cpauOcs.job devenu inutile."
+	rm -rf /var/se3/Progs/install/cpauOcs.job
+fi
+if [ -e /var/se3/Progs/install/deploy/ocsremontee.bat ]; then
+	echo "Suppression de ocsremontee.bat devenu inutile."
+	rm -rf /var/se3/Progs/install/ocsremontee.bat
+fi
+if [ -e /var/se3/Progs/install/deploy/cpauOcsRemontee.job ]; then
+	echo "Suppression de cpauOcsRemontee.job devenu inutile."
+	rm -rf /var/se3/Progs/install/cpauOcsRemontee.job
+fi
+
+
 ##### Gereration du job CPAU cote serveur. ###
-OcsDir="/var/se3/Progs/ro/inventory/deploy"
+OcsDir="/var/se3/Progs/ro"
 Ocsbat="$OcsDir/ocs.bat"
+Ocsautonomebat="$OcsDir/ocs_autonome.bat"
 
 # Fix for wine when running from sudo
 export HOME=/root
 JOB=cpauOcs.job
 WINECMD="env WINEDEBUG=-all wine"
 
-
+##### Generation du job CPAU cote serveur. ###
 rm -f $OcsDir/$JOB
-echo "Creation du $JOB CPAU destine a installer ocs-clientwin sur les postes."
-TASK="echo Veuillez patienter...&&c:\\tmpOcs\\OcsAgentSetup.exe /S /server:$se3ip /pnum:909 /np /debug"
+echo "Creation du $JOB CPAU destine a installer ocs-clientwin sur tous les postes."
+TASK="call $OcsDirWin\\ocs.bat";
 echo "TASK se3 : $TASK" | sed -e "s/$xppass/XXXXXX/g"
 cd /tmp
 $WINECMD /home/netlogon/CPAU.exe -u adminse3 -wait  -p $xppass -file $JOB -lwop  -c -ex "$TASK" -enc > /dev/null
 mv $JOB $OcsDir
 
 LogonBat="\\\\$NETBIOS_NAME\\admhomes\\templates\\base\\logon.bat"
-### CREATION DE ocs.bat cote serveur pour les postes Clients W98 ou WinXP ###
+### CREATION DE ocs.bat cote serveur pour les postes Windows XP a 10 ###
 echo "Modification de $OcsDir/ocs.bat"
 sed -i $Ocsbat -e 's/##SE3IP##/$SE3IP/g'
 sed -i $Ocsbat -e 's/##NETBIOSNAME##/$NETBIOS_NAME/g'
 
+### CREATION DE ocs_autonome.bat cote serveur pour les postes Windows XP a 10 hors SE3 ###
+echo "Modification de $OcsDir/ocs_autonome.bat"
+sed -i $Ocsautonomebat -e 's/##SE3IP##/$SE3IP/g'
+sed -i $Ocsautonomebat -e 's/##NETBIOSNAME##/$NETBIOS_NAME/g'
+
 echo "Modification (si besoin) du script de login de base"
 
 # Nettoyage ancienne commande
-sed -i "/^@if \"%OS%\"==\"Windows_NT\"/d" /home/templates/base/logon.bat
+sed -i "/ocs.bat/d" /home/templates/base/logon.bat
 
 # Commande a placer dans le script de login des utilisateurs
-CMDINSTALL="$CPAU -dec -lwp -hide -cwd %SystemDrive%\\ -file \\\\$NETBIOS_NAME\\Progs\\ro\\$INSTTASKJOB 2>NUL >NUL"
-FINDCMD="@if not exist \"%WinDir%\\\\wpkg-client.vbs\" \\\\\\\\$NETBIOS_NAME\\\\netlogon\\\\CPAU.exe -dec -lwp -hide -cwd %SystemDrive%\\\\ -file \\\\\\\\$NETBIOS_NAME\\\\Progs\\\\ro\\\\$INSTTASKJOB 2>NUL >NUL"
+FINDCMD="\\\\\\\\$NETBIOS_NAME\\\\netlogon\\\\CPAU.exe -dec -lwp -hide -cwd %SystemDrive%\\\\ -file \\\\\\\\$NETBIOS_NAME\\\\Progs\\\\ro\\\\inventory\\\\deploy\\\\$JOB 2>NUL >NUL"
 
 TEST=""
 [ -e /home/templates/base/logon.bat ] && TEST=$(cat /home/templates/base/logon.bat | grep "$FINDCMD" | grep -v "::" | grep -v "rem")
 if [ ! "$TEST" = "" ]; then
-	echo "La commande d'installation de wpkg existe dans logon.bat et n'est pas commentee."
+	echo "La commande d'installation de ocs existe dans logon.bat et n'est pas commentee."
 else
-	echo "Commande d'installation de wpkg ajoutee a /home/templates/base/logon.bat"
+	echo "Commande d'installation de ocs ajoutee a /home/templates/base/logon.bat"
 	
-    echo "$CMDINSTALL" >> /home/templates/base/logon.bat
+    echo "\\\\$NETBIOS_NAME\\netlogon\\CPAU.exe -dec -lwp -hide -cwd %SystemDrive%\\ -file \\\\$NETBIOS_NAME\\Progs\\ro\\inventory\\deploy\\$JOB 2>NUL >NUL">>/home/templates/base/logon.bat
     
     todos /home/templates/base/logon.bat
     chown admin:admins /home/templates/base/logon.bat
