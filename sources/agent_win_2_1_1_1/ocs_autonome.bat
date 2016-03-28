@@ -8,7 +8,7 @@ If Exist "%ProgramFiles%\OCS Inventory Agent 2_1_1_1\OCSInventory.exe" goto Fin
 
 :Inst
 :: Installation du nouveau client en version 2.1.1.1
-"OCS-NG-Windows-Agent-Setup.exe" /S /NOSPLASH /NOW /SERVER=http://172.20.1.11/ocsinventory /TAG=AUTRE /SSL=0 /D=%ProgramFiles%\OCS Inventory Agent 2_1_1_1\
+"OCS-NG-Windows-Agent-Setup.exe" /S /NOSPLASH /NOW /SERVER=http://##SE3IP##/ocsinventory /TAG=AUTRE /SSL=0 /D=%ProgramFiles%\OCS Inventory Agent 2_1_1_1\
 goto Fin
 
 :Uninst
