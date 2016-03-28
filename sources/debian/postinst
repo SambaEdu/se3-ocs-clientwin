@@ -58,13 +58,13 @@ mv $JOB $OcsDir
 LogonBat="\\\\$netbios_name\\admhomes\\templates\\base\\logon.bat"
 ### CREATION DE ocs.bat cote serveur pour les postes Windows XP a 10 ###
 echo "Modification de $OcsDir/ocs.bat"
-sed -i $Ocsbat -e 's/##SE3IP##/$se3ip/g'
-sed -i $Ocsbat -e 's/##NETBIOSNAME##/$netbios_name/g'
+sed -i $Ocsbat -e "s/##SE3IP##/${se3ip}/g"
+sed -i $Ocsbat -e "s/##NETBIOSNAME##/${netbios_name}/g"
 
 ### CREATION DE ocs_autonome.bat cote serveur pour les postes Windows XP a 10 hors SE3 ###
 echo "Modification de $OcsDir/ocs_autonome.bat"
-sed -i $Ocsautonomebat -e 's/##SE3IP##/$se3ip/g'
-sed -i $Ocsautonomebat -e 's/##NETBIOSNAME##/$netbios_name/g'
+sed -i $Ocsautonomebat -e "s/##SE3IP##/${se3ip}/g"
+sed -i $Ocsautonomebat -e "s/##NETBIOSNAME##/${netbios_name}/g"
 
 echo "Modification (si besoin) du script de login de base"
 
