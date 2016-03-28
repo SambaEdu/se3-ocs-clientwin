@@ -22,26 +22,22 @@ if [ -e /var/se3/Progs/install/ocs-config.bat ]; then
 	echo "Suppression de ocs-config.bat devenu inutile."
 	rm -rf /var/se3/Progs/install/ocs-config.bat
 fi
-if [ -e /var/se3/Progs/install/deploy/ocs.bat ]; then
-	echo "Suppression de ocs.bat devenu inutile."
-	rm -rf /var/se3/Progs/install/ocs.bat
-fi
-if [ -e /var/se3/Progs/install/deploy/cpauOcs.job ]; then
+if [ -e /var/se3/Progs/ro/inventory/deploy/cpauOcs.job ]; then
 	echo "Suppression de cpauOcs.job devenu inutile."
-	rm -rf /var/se3/Progs/install/cpauOcs.job
+	rm -rf /var/se3/Progs/ro/inventory/deploy/cpauOcs.job
 fi
-if [ -e /var/se3/Progs/install/deploy/ocsremontee.bat ]; then
+if [ -e /var/se3/Progs/ro/inventory/deploy/ocsremontee.bat ]; then
 	echo "Suppression de ocsremontee.bat devenu inutile."
-	rm -rf /var/se3/Progs/install/ocsremontee.bat
+	rm -rf /var/se3/Progs/ro/inventory/deploy/ocsremontee.bat
 fi
-if [ -e /var/se3/Progs/install/deploy/cpauOcsRemontee.job ]; then
+if [ -e /var/se3/Progs/ro/inventory/deploy/cpauOcsRemontee.job ]; then
 	echo "Suppression de cpauOcsRemontee.job devenu inutile."
-	rm -rf /var/se3/Progs/install/cpauOcsRemontee.job
+	rm -rf /var/se3/Progs/ro/inventory/deploy/cpauOcsRemontee.job
 fi
 
 
 ##### Gereration du job CPAU cote serveur. ###
-OcsDir="/var/se3/Progs/ro"
+OcsDir="/var/se3/Progs/ro/inventory/deploy"
 Ocsbat="$OcsDir/ocs.bat"
 Ocsautonomebat="$OcsDir/ocs_autonome.bat"
 
@@ -53,7 +49,7 @@ WINECMD="env WINEDEBUG=-all wine"
 ##### Generation du job CPAU cote serveur. ###
 rm -f $OcsDir/$JOB
 echo "Creation du $JOB CPAU destine a installer ocs-clientwin sur tous les postes."
-TASK="call $OcsDirWin\\ocs.bat";
+TASK="call \\\\$NETBIOS_NAME\\Progs\\ro\\inventory\\deploy\\ocs.bat";
 echo "TASK se3 : $TASK" | sed -e "s/$xppass/XXXXXX/g"
 cd /tmp
 $WINECMD /home/netlogon/CPAU.exe -u adminse3 -wait  -p $xppass -file $JOB -lwop  -c -ex "$TASK" -enc > /dev/null
