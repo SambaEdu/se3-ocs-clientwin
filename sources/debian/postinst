@@ -40,6 +40,7 @@ fi
 OcsDir="/var/se3/Progs/ro/inventory/deploy"
 Ocsbat="$OcsDir/ocs.bat"
 Ocsautonomebat="$OcsDir/ocs_autonome.bat"
+Ocsinstallbat="$OcsDir/ocs_install.bat"
 
 # Fix for wine when running from sudo
 export HOME=/root
@@ -71,6 +72,11 @@ echo "Modification de $OcsDir/ocs.bat"
 sed -i $Ocsbat -e "s/##SE3IP##/${se3ip}/g"
 sed -i $Ocsbat -e "s/##NETBIOSNAME##/${netbios_name}/g"
 
+### CREATION DE ocs_install.bat cote serveur pour les postes Windows XP a 10 ###
+echo "Modification de $OcsDir/ocs.bat"
+sed -i $Ocsinstallbat -e "s/##SE3IP##/${se3ip}/g"
+sed -i $Ocsinstallbat -e "s/##NETBIOSNAME##/${netbios_name}/g"
+
 ### CREATION DE ocs_autonome.bat cote serveur pour les postes Windows XP a 10 hors SE3 ###
 echo "Modification de $OcsDir/ocs_autonome.bat"
 sed -i $Ocsautonomebat -e "s/##SE3IP##/${se3ip}/g"
@@ -99,8 +105,8 @@ TEST=""
 echo "Commande d'installation de ocs ajoutee a /var/se3/Progs/ro/inventory/deploy/ocsdeploy.bat"
 echo "\\\\$netbios_name\\netlogon\\CPAU.exe -dec -lwp -hide -wait -cwd %SystemDrive%\\ -file \\\\$netbios_name\\Progs\\ro\\inventory\\deploy\\$JOB 2>NUL >NUL">>/var/se3/Progs/ro/inventory/deploy/ocsdeploy.bat
 todos /var/se3/Progs/ro/inventory/deploy/ocsdeploy.bat
-chown admin:admins /var/se3/Progs/ro/inventory/deploy/ocsdeploy.bat
-chmod 770 /var/se3/Progs/ro/inventory/deploy/ocsdeploy.bat
+chown admin:admins /home/templates/base/logon.bat
+chmod 774 /home/templates/base/logon.bat
 
 #### DROITS SUR Progs ####
 echo "Positionnement correct des droits sur le dossier de deploiement."

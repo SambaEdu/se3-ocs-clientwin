@@ -1,8 +1,14 @@
+se3-ocs-clientwin (2.0-3) unstable; urgency=low
+
+  * Nouveau mode de deploiement.
+
+ -- Laurent JOLY <laurentjoly@orange.fr>  Mon, 04 Apr 2016 00:15:33 +0200
+
 se3-ocs-clientwin (2.0-2) unstable; urgency=low
 
-  * Finalisation du paquet
+  * Mise en fonction du paquet.
 
- -- Laurent JOLY <laurentjoly@orange.fr>  Mon, 28 Mar 2016 14:40:03 +0200
+ -- Laurent JOLY <laurentjoly@orange.fr>  Sun, 03 Apr 2016 11:22:22 +0200
 
 se3-ocs-clientwin (2.0-1) unstable; urgency=low
 
