@@ -44,9 +44,10 @@ Ocsautonomebat="$OcsDir/ocs_autonome.bat"
 # Fix for wine when running from sudo
 export HOME=/root
 JOB=cpauOcs.job
+JOB2=cpauOcs2.job
 WINECMD="env WINEDEBUG=-all wine"
 
-##### Generation du job CPAU cote serveur. ###
+##### Generation du job CPAU install. ###
 rm -f $OcsDir/$JOB
 echo "Creation du $JOB CPAU destine a installer ocs-clientwin sur tous les postes."
 TASK="call \\\\$netbios_name\\Progs\\ro\\inventory\\deploy\\ocs.bat";
@@ -54,6 +55,15 @@ echo "TASK se3 : $TASK" | sed -e "s/$xppass/XXXXXX/g"
 cd /tmp
 $WINECMD /home/netlogon/CPAU.exe -u adminse3 -wait  -p $xppass -file $JOB -lwp  -c -ex "$TASK" -enc > /dev/null
 mv $JOB $OcsDir
+
+##### Generation du job CPAU demarrage. ###
+rm -f $OcsDir/$JOB2
+echo "Creation du $JOB CPAU destine a installer le script sur tous les postes."
+TASK="call \\\\$netbios_name\\Progs\\ro\\inventory\\deploy\\ocs_install.bat";
+echo "TASK se3 : $TASK" | sed -e "s/$xppass/XXXXXX/g"
+cd /tmp
+$WINECMD /home/netlogon/CPAU.exe -u adminse3 -wait  -p $xppass -file $JOB2 -lwp  -c -ex "$TASK" -enc > /dev/null
+mv $JOB2 $OcsDir
 
 LogonBat="\\\\$netbios_name\\admhomes\\templates\\base\\logon.bat"
 ### CREATION DE ocs.bat cote serveur pour les postes Windows XP a 10 ###
@@ -72,15 +82,25 @@ echo "Modification (si besoin) du script de login de base"
 sed -i "/ocs.bat/d" /home/templates/base/logon.bat
 sed -i "/cpauOcs.job/d" /home/templates/base/logon.bat
 
-# Commande a placer dans le script de login des utilisateurs
-FINDCMD="\\\\\\\\$netbios_name\\\\netlogon\\\\CPAU.exe -dec -lwp -hide -wait -cwd %SystemDrive%\\\\ -file \\\\\\\\$netbios_name\\\\Progs\\\\ro\\\\inventory\\\\deploy\\\\$JOB 2>NUL >NUL"
+# Commande a placer dans le script de logon.bat des utilisateurs
+FINDCMD="\\\\\\\\$netbios_name\\\\netlogon\\\\CPAU.exe -dec -lwp -hide -wait -cwd %SystemDrive%\\\\ -file \\\\\\\\$netbios_name\\\\Progs\\\\ro\\\\inventory\\\\deploy\\\\$JOB2 2>NUL >NUL"
 
 TEST=""
 echo "Commande d'installation de ocs ajoutee a /home/templates/base/logon.bat"
-echo "\\\\$netbios_name\\netlogon\\CPAU.exe -dec -lwp -hide -wait -cwd %SystemDrive%\\ -file \\\\$netbios_name\\Progs\\ro\\inventory\\deploy\\$JOB 2>NUL >NUL">>/home/templates/base/logon.bat
+echo "\\\\$netbios_name\\netlogon\\CPAU.exe -dec -lwp -hide -wait -cwd %SystemDrive%\\ -file \\\\$netbios_name\\Progs\\ro\\inventory\\deploy\\$JOB2 2>NUL >NUL">>/home/templates/base/logon.bat
 todos /home/templates/base/logon.bat
 chown admin:admins /home/templates/base/logon.bat
 chmod 770 /home/templates/base/logon.bat
+
+# Commande a placer dans le script de ocsdeploy.bat des utilisateurs
+FINDCMD="\\\\\\\\$netbios_name\\\\netlogon\\\\CPAU.exe -dec -lwp -hide -wait -cwd %SystemDrive%\\\\ -file \\\\\\\\$netbios_name\\\\Progs\\\\ro\\\\inventory\\\\deploy\\\\$JOB 2>NUL >NUL"
+
+TEST=""
+echo "Commande d'installation de ocs ajoutee a /var/se3/Progs/ro/inventory/deploy/ocsdeploy.bat"
+echo "\\\\$netbios_name\\netlogon\\CPAU.exe -dec -lwp -hide -wait -cwd %SystemDrive%\\ -file \\\\$netbios_name\\Progs\\ro\\inventory\\deploy\\$JOB 2>NUL >NUL">>/var/se3/Progs/ro/inventory/deploy/ocsdeploy.bat
+todos /var/se3/Progs/ro/inventory/deploy/ocsdeploy.bat
+chown admin:admins /var/se3/Progs/ro/inventory/deploy/ocsdeploy.bat
+chmod 770 /var/se3/Progs/ro/inventory/deploy/ocsdeploy.bat
 
 #### DROITS SUR Progs ####
 echo "Positionnement correct des droits sur le dossier de deploiement."
