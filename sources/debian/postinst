@@ -103,7 +103,7 @@ FINDCMD="\\\\\\\\$netbios_name\\\\netlogon\\\\CPAU.exe -dec -lwp -hide -wait -cw
 
 TEST=""
 echo "Commande d'installation de ocs ajoutee a /var/se3/Progs/ro/inventory/deploy/ocsdeploy.bat"
-echo "\\\\$netbios_name\\netlogon\\CPAU.exe -dec -lwp -hide -wait -cwd %SystemDrive%\\ -file \\\\$netbios_name\\Progs\\ro\\inventory\\deploy\\$JOB 2>NUL >NUL">>/var/se3/Progs/ro/inventory/deploy/ocsdeploy.bat
+echo "\\\\$netbios_name\\netlogon\\CPAU.exe -dec -lwp -hide -cwd %SystemDrive%\\ -file \\\\$netbios_name\\Progs\\ro\\inventory\\deploy\\$JOB 2>NUL >NUL">>/var/se3/Progs/ro/inventory/deploy/ocsdeploy.bat
 todos /var/se3/Progs/ro/inventory/deploy/ocsdeploy.bat
 chown admin:admins /home/templates/base/logon.bat
 chmod 774 /home/templates/base/logon.bat
