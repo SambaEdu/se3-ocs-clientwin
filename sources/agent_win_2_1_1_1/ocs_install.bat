@@ -15,8 +15,8 @@ xcopy /I /H /R /Y /Z /Q "\\##NETBIOSNAME##\Progs\ro\inventory\deploy\ocsdeploy.b
 goto fin
 
 :winxp
-If Exist "%allusersprofile%\Menu DÃ©marrer\Programmes\DÃ©marrage\ocsdeploy.bat" goto fin
-xcopy /I /H /R /Y /Z /Q "\\##NETBIOSNAME##\Progs\ro\inventory\deploy\ocsdeploy.bat" "%allusersprofile%\Menu DÃ©marrer\Programmes\DÃ©marrage" >NUL
+If Exist "%allusersprofile%\Menu D‚marrer\Programmes\D‚marrage\ocsdeploy.bat" goto fin
+xcopy /I /H /R /Y /Z /Q "\\##NETBIOSNAME##\Progs\ro\inventory\deploy\ocsdeploy.bat" "%allusersprofile%\Menu D‚marrer\Programmes\D‚marrage" >NUL
 goto fin
 
 :fin
