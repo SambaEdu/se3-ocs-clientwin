@@ -1,0 +1,22 @@
+Format: 1.8
+Date: Mon, 04 Apr 2016 13:00:00 +0200
+Source: se3-ocs-clientwin
+Binary: se3-ocs-clientwin
+Architecture: all
+Version: 2.0-5
+Distribution: unstable
+Urgency: low
+Maintainer: franck <franck.molle@ac-rouen.fr>
+Changed-By: Laurent JOLY <laurentjoly@orange.fr>
+Description: 
+ se3-ocs-clientwin - windows client for the se3-ocs paquet
+Changes: 
+ se3-ocs-clientwin (2.0-5) unstable; urgency=low
+ .
+   * Correctif pour windows XP
+Checksums-Sha1: 
+ 91d71ceecdad9a644fc12bfc0f6c05215e952874 4810676 se3-ocs-clientwin_2.0-5_all.deb
+Checksums-Sha256: 
+ fda34512aae38d5150536d15111257f40b5a8a631a836fe5501632baee8accdf 4810676 se3-ocs-clientwin_2.0-5_all.deb
+Files: 
+ f9a225ef6d7b9527a9d2b352da423114 4810676 misc extra se3-ocs-clientwin_2.0-5_all.deb
